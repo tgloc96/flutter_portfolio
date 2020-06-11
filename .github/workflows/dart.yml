@@ -23,4 +23,5 @@ jobs:
       - name: Lint test
         run: flutter analyze
       - run: flutter test
+      - run: flutter config --enable-web
       - run: flutter build web --release --dart-define=FLUTTER_WEB_USE_SKIA=true
