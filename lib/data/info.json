@@ -1,0 +1,92 @@
+{
+  "home": {
+    "urlAvatar" : "abc",
+    "title" : "Hi",
+    "subtitle": "I'm Loc",
+    "description" : "Extremely motivated to constantly develop my skills and grow professionally. Software engineer with thorough hands-on experience in Mobile Application Development.",
+    "contributors" : [
+      {
+        "url_icon_app" : "assets/images/logo_dofhunt.jpg",
+        "url" : "https://200lab.io/portfolio-dofhunt-app"
+      },
+      {
+        "url_icon_app" : "assets/images/logo_manhunt.png",
+        "url" : "https://200lab.io/portfolio-manhunt-app"
+      }
+    ],
+    "contact" : {
+      "phone" : "+84 355 787 370",
+      "email" : "tgloc96@gmail.com",
+      "repo" : {
+        "name" : "tgloc96",
+        "url_repo" : "https://github.com/tgloc96/flutter_portfolio",
+        "type_repo" : "github"
+      }
+    }
+  },
+  "about" : {
+    "educations": [
+      {
+        "organization" : "Son Handsome CO.LTD",
+        "time" : "(2015 - 2016)",
+        "knowledge" : "Knowledge of C/C++/C#"
+      },
+      {
+        "organization" : "CTUT - CAN THO UNIVERSITY OF TECHNOLOGY",
+        "time" : "(2014 - 2018)",
+        "knowledge" : "Major: Information System"
+      }
+    ],
+    "experience" : [
+      {
+        "position" : "Mobile Application Developer",
+        "organization" : "200Lab",
+        "time" : "August. 2019 to present",
+        "skills" : [
+          "- Application development with Flutter",
+          "- Development social application",
+          "- Research behavior's user"
+        ]
+      },
+      {
+        "position" : "Technical Support",
+        "organization" : "Son Handsome",
+        "time" : "May. 2016 to 2019",
+        "skills" : [
+          "- Support about technical",
+          "- Planing to sell product & proposed marketing strategy"
+        ]
+      }
+    ],
+    "skills" : [
+      {
+        "title" : "GIT",
+        "value" : 65
+      },
+      {
+        "title" : "UNIT TESTING",
+        "value" : 60
+      },
+      {
+        "title" : "OOP",
+        "value" : 80
+      },
+      {
+        "title" : "MYSQL",
+        "value" : 65
+      },
+      {
+        "title" : "DART/FLUTTER",
+        "value" : 75
+      },
+      {
+        "title" : "PHP/LARAVEL",
+        "value" : 60
+      },
+      {
+        "title" : "C/C++/C#",
+        "value" : 65
+      }
+    ]
+  }
+}
