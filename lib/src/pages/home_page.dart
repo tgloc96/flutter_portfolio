@@ -1,134 +1,323 @@
 import 'dart:math';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_cv/src/common/common.dart';
+import 'package:flutter_cv/src/models/home.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class HomePage extends StatefulWidget {
+  final Home home;
+
+  const HomePage({@required this.home, Key key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  Home get _home => widget.home;
+
+  bool get _isEmptyContributors => _home.contributors?.isEmpty ?? true;
+
+  bool get _isEmptyContact => _home.contact == null;
+
   @override
   Widget build(BuildContext context) {
     return ScreenTypeLayout(
-      desktop: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 50),
-        child: Row(
-          children: [
-            Expanded(child: buildInformation()),
-            SizedBox(width: 50),
-            Expanded(child: buildAvatar()),
-          ],
-        ),
-      ),
-      mobile: SingleChildScrollView(
-        padding: EdgeInsets.all(30),
-        child: Column(
-          children: [
-            buildAvatar(),
-            SizedBox(height: 50),
-            buildInformation(),
-          ],
-        ),
+      desktop: buildUIDesktop(),
+      tablet: buildUIMobile(),
+      mobile: buildUIMobile(),
+    );
+  }
+
+  Widget buildUIDesktop() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 50),
+      child: Column(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(child: _buildInformation()),
+                const SizedBox(width: 50),
+                Expanded(child: _buildAvatar()),
+              ],
+            ),
+          ),
+          _buildFooter(),
+          const SizedBox(height: 30),
+        ],
       ),
     );
   }
 
-  Widget buildInformation() {
-    return ResponsiveBuilder(builder: (context, sizingInfo) {
-      return Column(
-        crossAxisAlignment: sizingInfo.isDesktop
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildFooter() {
+    final widgets = [
+      Row(
         children: [
-          Text(
-            'Hi',
-            style: GoogleFonts.aBeeZee().copyWith(
-              fontSize: 75,
+          _buildShowCase(),
+          if (!_isEmptyContributors && !_isEmptyContact)
+            Container(
+              width: 3,
+              height: 40,
+              margin: const EdgeInsets.symmetric(horizontal: 30),
               color: Theme.of(context).primaryColor,
             ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            "I'm Loc",
-            style: Theme.of(context).textTheme.headline1,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Extremely motivated to constantly develop my skills and grow professionally. Software engineer with thorough hands-on experience in Mobile Application Development.',
-            style: Theme.of(context).textTheme.headline5.copyWith(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
-          const SizedBox(height: 24),
-          ScreenTypeLayout(
-            desktop: SizedBox(
-              width: 500,
-              child: buildButtonKnowMore(),
-            ),
-            mobile: buildButtonKnowMore(),
-          )
+          _buildContact(),
         ],
+      ),
+      _buildDesProduct(),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraint) {
+        if (constraint.maxWidth > 1300) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: widgets,
+          );
+        }
+        return Column(
+          children: [
+            const SizedBox(height: 20),
+            _buildShowCase(),
+            if (!_isEmptyContributors && !_isEmptyContact)
+              const SizedBox(height: 20),
+            _buildContact(),
+            const SizedBox(height: 20),
+            _buildDesProduct(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildUIMobile() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(30),
+      child: Column(
+        children: [
+          _buildAvatar(),
+          const SizedBox(height: 50),
+          _buildInformation(),
+          _buildFooter(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInformation() {
+    return ResponsiveBuilder(builder: (context, sizingInfo) {
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: sizingInfo.isDesktop
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_home.title?.isNotEmpty ?? false)
+              Text(
+                _home.title,
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            const SizedBox(height: 30),
+            if (_home.subtitle?.isNotEmpty ?? false)
+              Text(
+                _home.subtitle,
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            const SizedBox(height: 30),
+            if (_home.description?.isNotEmpty ?? false)
+              Text(
+                _home.description,
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+          ],
+        ),
       );
     });
   }
 
-  Widget buildButtonKnowMore() {
-    return RaisedButton(
-      color: Colors.white,
-      onPressed: () {},
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(
-          color: Theme.of(context).primaryColor,
-          width: 4,
+  Widget _buildShowCase() {
+    if (_isEmptyContributors) {
+      return const SizedBox();
+    }
+
+    return Row(
+      children: [
+        Text(
+          'CONTRIBUTORS',
+          style: Theme.of(context).textTheme.headline6.copyWith(
+                color: Theme.of(context).primaryColor,
+              ),
         ),
+        ..._home.contributors
+            .expand((element) => [
+                  const SizedBox(width: 30),
+                  _buildIconAppShowCase(
+                    asset: element.urlIconApp,
+                    url: element.url,
+                  )
+                ])
+            .toList(),
+      ],
+    );
+  }
+
+  Widget _buildContact() {
+    if (_isEmptyContact) {
+      return const SizedBox();
+    }
+
+    return Wrap(
+      runSpacing: 12,
+      children: [
+        Text(
+          'CONTACT',
+          style: Theme.of(context).textTheme.headline6.copyWith(
+                color: Theme.of(context).primaryColor,
+              ),
+        ),
+        const SizedBox(width: 20),
+        if (_home.contact.phone?.isNotEmpty ?? false)
+          _buildItemContact(
+            icon: const Icon(Icons.phone_iphone),
+            des: _home.contact.phone,
+          ),
+        if (_home.contact.email?.isNotEmpty ?? false)
+          _buildItemContact(
+            icon: const Icon(Icons.email),
+            des: _home.contact.email,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildItemContact({
+    @required Widget icon,
+    @required String des,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 40.0),
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 8),
+          Text(
+            des,
+            style: Theme.of(context)
+                .textTheme
+                .subtitle1
+                .copyWith(color: Theme.of(context).primaryColorDark),
+          ),
+        ],
       ),
-      child: Text(
-        'KNOW MORE',
-        style: TextStyle(
-          color: Theme.of(context).primaryColor,
+    );
+  }
+
+  Widget _buildIconAppShowCase({
+    @required String asset,
+    @required String url,
+  }) {
+    return GestureDetector(
+      onTap: () => launchURL(url),
+      child: Container(
+        decoration: const BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              spreadRadius: 4,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            )
+          ],
+        ),
+        child: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context).primaryColor,
+              width: 4,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: ClipOval(
+              child: Image.asset(asset),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget buildAvatar() {
+//  Widget _buildButtonKnowMore() {
+//    return RaisedButton(
+//      color: Colors.white,
+//      onPressed: () {},
+//      shape: RoundedRectangleBorder(
+//        borderRadius: BorderRadius.circular(8),
+//        side: BorderSide(
+//          color: Theme.of(context).primaryColor,
+//          width: 4,
+//        ),
+//      ),
+//      child: Text(
+//        'KNOW MORE',
+//        style: TextStyle(
+//          color: Theme.of(context).primaryColor,
+//        ),
+//      ),
+//    );
+//  }
+
+  Widget _buildAvatar() {
     return LayoutBuilder(builder: (context, constraints) {
       return AspectRatio(
-        aspectRatio: 1.2,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CustomPaint(
-            painter: MyPainter(
-              lineColor: Colors.teal,
-              width: 8.0,
-            ),
-            child: Container(
-              padding: EdgeInsets.all(constraints.maxWidth / 22),
+        aspectRatio: 1,
+        child: FractionallySizedBox(
+          heightFactor: 0.8,
+          widthFactor: 0.8,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CustomPaint(
+              painter: SemiCirclePainter(
+                lineColor: Theme.of(context).primaryColor,
+                width: 8.0,
+              ),
               child: Container(
-                padding: EdgeInsets.all(constraints.maxWidth / 20),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.tealAccent,
-                    width: 3,
-                  ),
-                ),
-                child: Material(
-                  elevation: 20,
-                  shape: CircleBorder(
-                    side: BorderSide(
-                      width: 10,
-                      color: Colors.white,
+                padding: EdgeInsets.all(constraints.maxWidth / 22),
+                child: Container(
+                  padding: EdgeInsets.all(constraints.maxWidth / 20),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).primaryColorLight,
+                      width: 3,
                     ),
                   ),
-                  child: Image.asset(
-                    'assets/images/avatar.JPG',
-                    fit: BoxFit.cover,
+                  child: Material(
+                    elevation: 10,
+                    shape: CircleBorder(
+                      side: BorderSide(
+                        width: 3,
+                        color: Theme.of(context).canvasColor,
+                      ),
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/avatar.jpeg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -138,50 +327,91 @@ class _HomePageState extends State<HomePage> {
       );
     });
   }
+
+  Widget _buildDesProduct() {
+    if (_home.contact?.repo == null) {
+      return const SizedBox();
+    }
+
+    final repo = _home.contact.repo;
+
+    return Row(
+      children: [
+        Text(
+          'This product is written in Flutter',
+          style: Theme.of(context).textTheme.subtitle1.copyWith(
+                fontStyle: FontStyle.italic,
+              ),
+        ),
+        Container(
+          width: 2,
+          height: 20,
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          color: Theme.of(context).primaryColor,
+        ),
+        if (repo.typeRepo?.isNotEmpty ?? false) ...[
+          if (repo.typeRepo == 'github')
+            const FaIcon(FontAwesomeIcons.github)
+          else if (repo.typeRepo == 'gitlab')
+            const FaIcon(FontAwesomeIcons.gitlab),
+          const SizedBox(width: 4),
+        ],
+        Text.rich(TextSpan(
+          text: repo.name,
+          recognizer: TapGestureRecognizer()
+            ..onTap = () => launchURL(repo.urlRepo),
+          style: Theme.of(context).textTheme.subtitle1.copyWith(
+                color: Colors.blue,
+                fontStyle: FontStyle.italic,
+              ),
+        )),
+      ],
+    );
+  }
 }
 
-class MyPainter extends CustomPainter {
+class SemiCirclePainter extends CustomPainter {
   Color lineColor;
   double width;
 
-  MyPainter({
+  SemiCirclePainter({
     this.lineColor,
     this.width,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint complete = new Paint()
+    final complete = Paint()
       ..color = lineColor
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
       ..strokeWidth = width;
 
-    Offset center = Offset(size.width / 2, size.height / 2);
-    double radius = min(size.width / 2, size.height / 2);
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = min(size.width / 2, size.height / 2);
 
-    double arcAngle = 2 * pi * (25 / 100);
-    canvas.drawArc(
-      new Rect.fromCircle(
-        center: center,
-        radius: radius,
-      ),
-      pi / 4,
-      -arcAngle,
-      false,
-      complete,
-    );
-
-    canvas.drawArc(
-      new Rect.fromCircle(
-        center: center,
-        radius: radius,
-      ),
-      (3 * pi) / 4,
-      arcAngle,
-      false,
-      complete,
-    );
+    final arcAngle = 2 * pi * (25 / 100);
+    canvas
+      ..drawArc(
+        Rect.fromCircle(
+          center: center,
+          radius: radius,
+        ),
+        pi / 4,
+        -arcAngle,
+        false,
+        complete,
+      )
+      ..drawArc(
+        Rect.fromCircle(
+          center: center,
+          radius: radius,
+        ),
+        (3 * pi) / 4,
+        arcAngle,
+        false,
+        complete,
+      );
   }
 
   @override

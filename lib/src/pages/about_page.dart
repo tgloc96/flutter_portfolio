@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cv/src/models/about.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class AboutPage extends StatefulWidget {
+  final About about;
+
+  const AboutPage({@required this.about});
+
   @override
   _AboutPageState createState() => _AboutPageState();
 }
 
 class _AboutPageState extends State<AboutPage> {
+  About get about => widget.about;
+
   @override
   Widget build(BuildContext context) {
+    if (about == null) {
+      return const SizedBox();
+    }
+
     return ScreenTypeLayout(
       desktop: buildUIDesktop(),
+      mobile: buildUIMobile(),
+      tablet: buildUIMobile(),
     );
   }
 
@@ -18,96 +31,58 @@ class _AboutPageState extends State<AboutPage> {
     return Padding(
       padding: const EdgeInsets.all(30.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                buildCollection(
-                  title: 'Education',
-                  children: [
-                    buildItemEducation(
-                      title: 'CTUT - CAN THO UNIVERSITY OF TECHNOLOGY',
-                      time: '(2014 - 2018)',
-                      subtitle: 'Major: Information System',
-                    ),
-                    buildItemEducation(
-                      title: 'Son Handsome CO.LTD',
-                      time: '(2015 - 2016)',
-                      subtitle: 'Knowledge of C/C++/C#',
-                    ),
-                  ],
-                ),
-                Divider(),
-                SizedBox(height: 30),
-                buildCollection(
-                  title: 'Experience',
-                  children: [
-                    buildItemExp(
-                      position: 'Mobile Application Developer',
-                      company: '200Lab',
-                      time: 'August. 2019 to present',
-                      descriptions: [
-                        '- Application development with Flutter',
-                        '- Development social application',
-                        "- Research behavior's user"
-                      ],
-                    ),
-                    buildItemExp(
-                      position: 'Technical Support',
-                      company: 'Son Handsome',
-                      time: 'May. 2016 to 2019',
-                      descriptions: [
-                        '- Support about technical',
-                        '- Planing to sell product & proposed marketing strategy'
-                      ],
-                    ),
-                  ],
-                )
+                buildExperience(),
+                const Divider(),
+                const SizedBox(height: 30),
+                buildEducation(),
               ],
             ),
           ),
-          VerticalDivider(),
+          const VerticalDivider(),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: buildCollection(
-                title: 'Skills',
-                children: [
-                  buildItemSkills(
-                    title: 'GIT',
-                    value: 65.0,
-                  ),
-                  buildItemSkills(
-                    title: 'UNIT TESTING',
-                    value: 60.0,
-                  ),
-                  buildItemSkills(
-                    title: 'OOP',
-                    value: 80.0,
-                  ),
-                  buildItemSkills(
-                    title: 'MYSQL',
-                    value: 65.0,
-                  ),
-                  buildItemSkills(
-                    title: 'DART/FLUTTER',
-                    value: 75.0,
-                  ),
-                  buildItemSkills(
-                    title: 'PHP/LARAVEL',
-                    value: 60.0,
-                  ),
-                  buildItemSkills(
-                    title: 'C/C++/C#',
-                    value: 65.0,
-                  ),
-                ],
-              ),
-            ),
+                padding: const EdgeInsets.only(left: 16.0),
+                child: buildSkills()),
           )
         ],
       ),
+    );
+  }
+
+  Widget buildUIMobile() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        children: [
+          const SizedBox(height: 50),
+          buildExperience(),
+          buildEducation(),
+          buildSkills(),
+        ],
+      ),
+    );
+  }
+
+  Widget buildEducation() {
+    if (about.educations?.isEmpty ?? true) {
+      return const SizedBox();
+    }
+
+    return buildCollection(
+      title: 'Education',
+      children: about.educations
+          .map((e) => buildItemEducation(
+                title: e.organization,
+                subtitle: e.knowledge,
+                time: e.time,
+              ))
+          .toList(),
     );
   }
 
@@ -116,44 +91,88 @@ class _AboutPageState extends State<AboutPage> {
     String subtitle,
     String time,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headline5.copyWith(
-                      fontWeight: FontWeight.bold,
+    return ResponsiveBuilder(builder: (context, sizingInformation) {
+      var styleTitle = Theme.of(context).textTheme.headline5;
+      var styleSubtitle = Theme.of(context).textTheme.headline6;
+
+      if (sizingInformation.isMobile) {
+        styleTitle = Theme.of(context).textTheme.headline6;
+        styleSubtitle = Theme.of(context).textTheme.subtitle1;
+      }
+
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Wrap(
+              children: [
+                Text(
+                  title,
+                  style: styleTitle.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                if (time != null) ...[
+                  const SizedBox(
+                    width: 12
+                  ),
+                  Text(
+                    time,
+                    style: styleSubtitle.copyWith(
                       color: Theme.of(context).primaryColor,
                     ),
+                  )
+                ]
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: styleSubtitle.copyWith(
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColorDark,
               ),
-              if (time != null) ...[
-                SizedBox(
-                  width: 12,
-                ),
-                Text(
-                  time,
-                  style: Theme.of(context).textTheme.headline6.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                )
-              ]
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            style: Theme.of(context).textTheme.headline6.copyWith(
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColorDark,
-                ),
-          )
-        ],
-      ),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget buildExperience() {
+    if (about.experiences?.isEmpty ?? true) {
+      return const SizedBox();
+    }
+
+    return buildCollection(
+      title: 'Experience',
+      children: about.experiences
+          .map((e) => buildItemExp(
+                position: e.position,
+                organization: e.organization,
+                time: e.time,
+                skills: e.skills,
+              ))
+          .toList(),
+    );
+  }
+
+  Widget buildSkills() {
+    if (about.skills?.isEmpty ?? true) {
+      return const SizedBox();
+    }
+
+    return buildCollection(
+      title: 'Skills',
+      children: about.skills
+          .map((e) => buildItemSkills(
+                title: e.title,
+                value: e.value.toDouble(),
+              ))
+          .toList(),
     );
   }
 
@@ -189,9 +208,9 @@ class _AboutPageState extends State<AboutPage> {
 
   Widget buildItemExp({
     String position,
-    String company,
+    String organization,
     String time,
-    List<String> descriptions,
+    List<String> skills,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
@@ -207,14 +226,14 @@ class _AboutPageState extends State<AboutPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            '$company | $time',
+            '$organization | $time',
             style: Theme.of(context).textTheme.headline6.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).primaryColorDark,
                 ),
           ),
-          SizedBox(height: 12),
-          ...descriptions
+          const SizedBox(height: 12),
+          ...skills
               .map((des) => Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
@@ -234,19 +253,25 @@ class _AboutPageState extends State<AboutPage> {
     @required String title,
     @required List<Widget> children,
   }) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.headline3.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        if (children != null) ...[
-          SizedBox(height: 30),
-          ...children,
-        ]
-      ],
-    );
+    return ResponsiveBuilder(builder: (context, sizingInformation) {
+      var styleTitle = Theme.of(context).textTheme.headline3;
+      if (!sizingInformation.isDesktop) {
+        styleTitle = Theme.of(context).textTheme.headline4;
+      }
+      return Column(
+        children: [
+          Text(
+            title,
+            style: styleTitle.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (children != null) ...[
+            const SizedBox(height: 30),
+            ...children,
+          ]
+        ],
+      );
+    });
   }
 }
