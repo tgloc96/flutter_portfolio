@@ -1,5 +1,0 @@
-on: push
-name: Test
-jobs:
-  test:
-    run: flutter analyze
