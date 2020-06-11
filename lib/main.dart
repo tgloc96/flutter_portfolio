@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cv/src/pages/dashboard_page.dart';
 
-import 'src/pages/dash_board.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
     const primaryColor = Color(0xffA9A5AF);
     const primaryLight = Color(0xffdbd6e1);
     const primaryDark = Color(0xff7a7680);
-    final colorScheme = ColorScheme.light(primary: primaryColor);
+    const colorScheme = ColorScheme.light(primary: primaryColor);
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Portfolio',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -24,19 +24,22 @@ class MyApp extends StatelessWidget {
           primaryColorLight: primaryLight,
           primaryColorDark: primaryDark,
           canvasColor: Colors.white,
-          dividerTheme: DividerThemeData(
+          dividerTheme: const DividerThemeData(
             space: 0,
+          ),
+          iconTheme: const IconThemeData(
+            color: primaryDark,
           ),
           buttonTheme: ButtonThemeData(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical: 24,
               horizontal: 30,
             ),
           ),
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
             headline5: TextStyle(
               color: primaryColor,
               fontWeight: FontWeight.w500,
@@ -46,12 +49,12 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          primaryTextTheme: TextTheme(
+          primaryTextTheme: const TextTheme(
               bodyText1: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
           )),
         ),
-        home: DashBoard());
+        home: DashboardPage());
   }
 }
