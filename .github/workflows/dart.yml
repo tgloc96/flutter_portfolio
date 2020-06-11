@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image:  google/dart:latest
+      image:  [google/dart:latest,cirrusci/flutter:1.19.0-4.0.pre]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: flutter pub get
-    - name: Run tests
-      run: pub run test
-    - name: Lint test
-      run: flutter analyze
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Run tests
+        run: pub run test
+      - name: Lint test
+        run: flutter analyze
