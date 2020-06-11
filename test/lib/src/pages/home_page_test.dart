@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'package:flutter_cv/src/models/contact.dart';
 import 'package:flutter_cv/src/models/home.dart';
 import 'package:flutter_cv/src/models/repo.dart';
 import 'package:flutter_cv/src/pages/home_page.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import '../../../material_test_widget.dart';
+import 'package:flutter_cv/material_test_widget.dart';
 
 void main() {
   testWidgets('Should render success HomePage has a title',
