@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image:  [google/dart:latest,cirrusci/flutter:1.19.0-4.0.pre]
+      image:
+        - google/dart:latest
+        - cirrusci/flutter:1.19.0-4.0.pre
 
     steps:
       - uses: actions/checkout@v2
