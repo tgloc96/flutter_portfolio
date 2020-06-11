@@ -20,7 +20,7 @@ jobs:
         with:
           channel: 'beta'
       - run: flutter pub get
-      - run: flutter test
-      - run: flutter build apk
       - name: Lint test
         run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk
