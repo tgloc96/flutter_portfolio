@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           _buildAvatar(),
-          const SizedBox(height: 50),
+          _buildSpacer(desktop: 50, mobile: 24, tablet: 24),
           _buildInformation(),
           _buildFooter(),
         ],
@@ -113,8 +113,8 @@ class _HomePageState extends State<HomePage> {
       var titleStyle = Theme.of(context).textTheme.headline1;
       var descriptionStyle = Theme.of(context).textTheme.headline5;
 
-      if(!sizingInfo.isDesktop){
-        titleStyle = Theme.of(context).textTheme.headline3;
+      if (!sizingInfo.isDesktop) {
+        titleStyle = Theme.of(context).textTheme.headline2;
         descriptionStyle = Theme.of(context).textTheme.headline6;
       }
 
@@ -130,20 +130,20 @@ class _HomePageState extends State<HomePage> {
                 _home.title,
                 style: titleStyle,
               ),
-            const SizedBox(height: 30),
+            _buildSpacer(),
             if (_home.subtitle?.isNotEmpty ?? false)
               Text(
                 _home.subtitle,
                 style: titleStyle,
               ),
-            const SizedBox(height: 30),
+            _buildSpacer(),
             if (_home.description?.isNotEmpty ?? false)
               Text(
                 _home.description,
                 style: descriptionStyle.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
           ],
         ),
@@ -267,26 +267,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-//  Widget _buildButtonKnowMore() {
-//    return RaisedButton(
-//      color: Colors.white,
-//      onPressed: () {},
-//      shape: RoundedRectangleBorder(
-//        borderRadius: BorderRadius.circular(8),
-//        side: BorderSide(
-//          color: Theme.of(context).primaryColor,
-//          width: 4,
-//        ),
-//      ),
-//      child: Text(
-//        'KNOW MORE',
-//        style: TextStyle(
-//          color: Theme.of(context).primaryColor,
-//        ),
-//      ),
-//    );
-//  }
-
   Widget _buildAvatar() {
     return LayoutBuilder(builder: (context, constraints) {
       return AspectRatio(
@@ -374,6 +354,18 @@ class _HomePageState extends State<HomePage> {
               ),
         )),
       ],
+    );
+  }
+
+  Widget _buildSpacer({
+    double desktop = 30,
+    double mobile = 12,
+    double tablet = 12,
+  }) {
+    return ScreenTypeLayout(
+      desktop: SizedBox(height: desktop),
+      mobile: SizedBox(height: mobile),
+      tablet: SizedBox(height: tablet),
     );
   }
 }
