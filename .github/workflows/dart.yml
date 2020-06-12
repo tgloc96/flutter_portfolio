@@ -25,3 +25,18 @@ jobs:
       - run: flutter test
       - run: flutter config --enable-web
       - run: flutter build web --release --dart-define=FLUTTER_WEB_USE_SKIA=true
+      - run: |
+          cd build/web
+          git init
+          # type configurations: your user.email and user.name followed lines
+          # git config --global user.email your_email
+          # git config --global user.name your_name
+          git config --global user.email tgloc96@gmail.com
+          git config --global user.name tgloc96
+          git status
+          git remote add origin https://${{secrets.commit_secret}}@github.com/tgloc96/flutter_portfolio.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "update"
+          git push origin gh-pages -f
+
