@@ -85,6 +85,7 @@ class _DashboardPageState extends State<DashboardPage>
                   child: PageView(
                     controller: _pageController,
                     scrollDirection: Axis.vertical,
+                    pageSnapping: false,
                     children: [
                       HomePage(
                         home: appData.home,
