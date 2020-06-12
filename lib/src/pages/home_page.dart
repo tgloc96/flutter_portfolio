@@ -110,6 +110,14 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildInformation() {
     return ResponsiveBuilder(builder: (context, sizingInfo) {
+      var titleStyle = Theme.of(context).textTheme.headline1;
+      var descriptionStyle = Theme.of(context).textTheme.headline5;
+
+      if(!sizingInfo.isDesktop){
+        titleStyle = Theme.of(context).textTheme.headline3;
+        descriptionStyle = Theme.of(context).textTheme.headline6;
+      }
+
       return SingleChildScrollView(
         child: Column(
           crossAxisAlignment: sizingInfo.isDesktop
@@ -120,19 +128,19 @@ class _HomePageState extends State<HomePage> {
             if (_home.title?.isNotEmpty ?? false)
               Text(
                 _home.title,
-                style: Theme.of(context).textTheme.headline1,
+                style: titleStyle,
               ),
             const SizedBox(height: 30),
             if (_home.subtitle?.isNotEmpty ?? false)
               Text(
                 _home.subtitle,
-                style: Theme.of(context).textTheme.headline1,
+                style: titleStyle,
               ),
             const SizedBox(height: 30),
             if (_home.description?.isNotEmpty ?? false)
               Text(
                 _home.description,
-                style: Theme.of(context).textTheme.headline5.copyWith(
+                style: descriptionStyle.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.w500,
                     ),
