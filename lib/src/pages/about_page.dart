@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cv/src/models/about.dart';
+import 'package:flutter_cv/src/widgets/screen_type_layout_custom.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class AboutPage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _AboutPageState extends State<AboutPage> {
       return const SizedBox();
     }
 
-    return ScreenTypeLayout(
+    return ScreenTypeLayoutCustom(
       desktop: buildUIDesktop(),
       mobile: buildUIMobile(),
       tablet: buildUIMobile(),
@@ -115,9 +116,7 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                 ),
                 if (time != null) ...[
-                  const SizedBox(
-                    width: 12
-                  ),
+                  const SizedBox(width: 12),
                   Text(
                     time,
                     style: styleSubtitle.copyWith(
@@ -255,7 +254,8 @@ class _AboutPageState extends State<AboutPage> {
   }) {
     return ResponsiveBuilder(builder: (context, sizingInformation) {
       var styleTitle = Theme.of(context).textTheme.headline3;
-      if (!sizingInformation.isDesktop) {
+      if (!sizingInformation.isDesktop ||
+          sizingInformation.screenSize.width < 1366) {
         styleTitle = Theme.of(context).textTheme.headline4;
       }
       return Column(

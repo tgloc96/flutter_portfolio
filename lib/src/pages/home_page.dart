@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_cv/src/common/common.dart';
 import 'package:flutter_cv/src/models/home.dart';
+import 'package:flutter_cv/src/widgets/screen_type_layout_custom.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenTypeLayout(
+    return ScreenTypeLayoutCustom(
       desktop: buildUIDesktop(),
       tablet: buildUIMobile(),
       mobile: buildUIMobile(),
@@ -42,7 +43,16 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(child: _buildInformation()),
                 const SizedBox(width: 50),
-                Expanded(child: _buildAvatar()),
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: FractionallySizedBox(
+                      heightFactor: 0.75,
+                      widthFactor: 0.75,
+                      child: _buildAvatar(),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -95,17 +105,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildUIMobile() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(30),
-      child: Column(
-        children: [
-          _buildAvatar(),
-          _buildSpacer(desktop: 50, mobile: 24, tablet: 24),
-          _buildInformation(),
-          _buildFooter(),
-        ],
-      ),
-    );
+    return ResponsiveBuilder(builder: (context, sizingInformation) {
+      return SingleChildScrollView(
+        padding: sizingInformation.isMobile
+            ? const EdgeInsets.all(16)
+            : const EdgeInsets.all(30),
+        child: Column(
+          children: [
+            Container(
+              height: 300,
+              width: 300,
+              child: _buildAvatar(),
+            ),
+            _buildSpacer(desktop: 50, mobile: 24, tablet: 24),
+            _buildInformation(),
+            _buildFooter(),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildInformation() {
@@ -166,7 +184,7 @@ class _HomePageState extends State<HomePage> {
         ),
         ..._home.contributors
             .expand((element) => [
-                  const SizedBox(width: 30),
+                  _buildSpacer(),
                   _buildIconAppShowCase(
                     asset: element.urlIconApp,
                     url: element.url,
@@ -232,9 +250,41 @@ class _HomePageState extends State<HomePage> {
     @required String asset,
     @required String url,
   }) {
-    return GestureDetector(
-      onTap: () => launchURL(url),
-      child: Container(
+    Widget mobile() {
+      return Container(
+        decoration: const BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: Offset(0, 1),
+            )
+          ],
+        ),
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: Theme.of(context).primaryColor,
+              width: 2,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: ClipOval(
+              child: Image.asset(asset),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget desktop() {
+      return Container(
         decoration: const BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -263,49 +313,51 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => launchURL(url),
+      child: ScreenTypeLayoutCustom(
+        mobile: mobile(),
+        tablet: mobile(),
+        desktop: desktop(),
       ),
     );
   }
 
   Widget _buildAvatar() {
     return LayoutBuilder(builder: (context, constraints) {
-      return AspectRatio(
-        aspectRatio: 1,
-        child: FractionallySizedBox(
-          heightFactor: 0.8,
-          widthFactor: 0.8,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomPaint(
-              painter: SemiCirclePainter(
-                lineColor: Theme.of(context).primaryColor,
-                width: 8.0,
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CustomPaint(
+          painter: SemiCirclePainter(
+            lineColor: Theme.of(context).primaryColor,
+            width: 8.0,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(constraints.maxWidth / 22),
+            child: Container(
+              padding: EdgeInsets.all(constraints.maxWidth / 20),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(context).primaryColorLight,
+                  width: 3,
+                ),
               ),
-              child: Container(
-                padding: EdgeInsets.all(constraints.maxWidth / 22),
-                child: Container(
-                  padding: EdgeInsets.all(constraints.maxWidth / 20),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).primaryColorLight,
-                      width: 3,
-                    ),
+              child: Material(
+                elevation: 10,
+                shape: CircleBorder(
+                  side: BorderSide(
+                    width: 3,
+                    color: Theme.of(context).canvasColor,
                   ),
-                  child: Material(
-                    elevation: 10,
-                    shape: CircleBorder(
-                      side: BorderSide(
-                        width: 3,
-                        color: Theme.of(context).canvasColor,
-                      ),
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/images/avatar.jpeg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/avatar.jpeg',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -323,37 +375,75 @@ class _HomePageState extends State<HomePage> {
 
     final repo = _home.contact.repo;
 
-    return Row(
-      children: [
-        Text(
-          'This product is written in Flutter',
-          style: Theme.of(context).textTheme.subtitle1.copyWith(
-                fontStyle: FontStyle.italic,
-              ),
-        ),
-        Container(
-          width: 2,
-          height: 20,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          color: Theme.of(context).primaryColor,
-        ),
-        if (repo.typeRepo?.isNotEmpty ?? false) ...[
-          if (repo.typeRepo == 'github')
-            const FaIcon(FontAwesomeIcons.github)
-          else if (repo.typeRepo == 'gitlab')
-            const FaIcon(FontAwesomeIcons.gitlab),
-          const SizedBox(width: 4),
+    final des = Text(
+      'This product is written in Flutter',
+      style: Theme.of(context).textTheme.subtitle1.copyWith(
+            fontStyle: FontStyle.italic,
+          ),
+    );
+
+    Widget icon = const SizedBox(width: 4);
+    if (repo.typeRepo?.isNotEmpty ?? false) {
+      if (repo.typeRepo == 'github') {
+        icon = const FaIcon(FontAwesomeIcons.github);
+      } else if (repo.typeRepo == 'gitlab') {
+        icon = const FaIcon(FontAwesomeIcons.gitlab);
+      }
+    }
+
+    final repoName = Text.rich(TextSpan(
+      text: repo.name,
+      recognizer: TapGestureRecognizer()..onTap = () => launchURL(repo.urlRepo),
+      style: Theme.of(context).textTheme.subtitle1.copyWith(
+            color: Colors.blue,
+            fontStyle: FontStyle.italic,
+          ),
+    ));
+
+    Widget desktop() {
+      return Row(
+        children: [
+          des,
+          Container(
+            width: 2,
+            height: 20,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            color: Theme.of(context).primaryColor,
+          ),
+          if (icon != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: icon,
+            ),
+          repoName,
         ],
-        Text.rich(TextSpan(
-          text: repo.name,
-          recognizer: TapGestureRecognizer()
-            ..onTap = () => launchURL(repo.urlRepo),
-          style: Theme.of(context).textTheme.subtitle1.copyWith(
-                color: Colors.blue,
-                fontStyle: FontStyle.italic,
-              ),
-        )),
-      ],
+      );
+    }
+
+    Widget mobile() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          des,
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              if (icon != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: icon,
+                ),
+              repoName,
+            ],
+          ),
+        ],
+      );
+    }
+
+    return ScreenTypeLayoutCustom(
+      desktop: desktop(),
+      mobile: mobile(),
+      tablet: desktop(),
     );
   }
 
@@ -362,10 +452,19 @@ class _HomePageState extends State<HomePage> {
     double mobile = 12,
     double tablet = 12,
   }) {
-    return ScreenTypeLayout(
-      desktop: SizedBox(height: desktop),
-      mobile: SizedBox(height: mobile),
-      tablet: SizedBox(height: tablet),
+    return ScreenTypeLayoutCustom(
+      desktop: SizedBox(
+        height: desktop,
+        width: desktop,
+      ),
+      mobile: SizedBox(
+        height: mobile,
+        width: mobile,
+      ),
+      tablet: SizedBox(
+        height: tablet,
+        width: mobile,
+      ),
     );
   }
 }

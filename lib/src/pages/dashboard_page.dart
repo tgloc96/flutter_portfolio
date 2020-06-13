@@ -3,7 +3,7 @@ import 'package:flutter_cv/src/blocs/app_bloc.dart';
 import 'package:flutter_cv/src/common/app_constants.dart';
 import 'package:flutter_cv/src/models/app_data.dart';
 import 'package:flutter_cv/src/widgets/activity_indicator.dart';
-import 'package:responsive_builder/responsive_builder.dart';
+import 'package:flutter_cv/src/widgets/screen_type_layout_custom.dart';
 
 import 'about_page.dart';
 import 'home_page.dart';
@@ -76,7 +76,7 @@ class _DashboardPageState extends State<DashboardPage>
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ScreenTypeLayout(
+                ScreenTypeLayoutCustom(
                   desktop: buildTabBar(),
                   tablet: buildTabBar(),
                   mobile: const SizedBox(),
@@ -111,7 +111,7 @@ class _DashboardPageState extends State<DashboardPage>
             );
           }
 
-          return ScreenTypeLayout(
+          return ScreenTypeLayoutCustom(
             desktop: buildUIDesktop(),
             tablet: buildUIMobile(),
             mobile: buildUIMobile(),
@@ -160,7 +160,7 @@ class _DashboardPageState extends State<DashboardPage>
         ),
       ),
     );
-    return ScreenTypeLayout(
+    return ScreenTypeLayoutCustom(
       mobile: const SizedBox(),
       tablet: const SizedBox(),
       desktop: tabBar,
